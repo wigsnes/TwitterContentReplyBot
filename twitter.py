@@ -3,7 +3,7 @@ import config
 import json
 import time
 
-# DEGUG
+# --- DEGUG --- #
 DEBUG = True
 
 # --- SETUP --- #
@@ -11,6 +11,8 @@ DEBUG = True
 USERS = set(line.strip() for line in open('users.txt', 'r'))
 CONTENT = json.load(open('content.json', 'r', encoding="utf8"))
 MOCK = json.load(open('mock.json', 'r', encoding="utf8"))
+REPLIED_TO = set(int(line.strip()) for line in open('repliedTo.txt', 'r'))
+repliedTo = open('repliedTo.txt', 'a')
 
 # --- Twitter --- #
 
@@ -62,18 +64,24 @@ def main():
         api = setup()
 
     while True:
+        print(".")
         # Get latest tweets from users
         for user in USERS:
             tweets = getTweets(api, user, 5)
 
             # Check if tweets match list of content
             for tweet in tweets:
+                if tweet.id in REPLIED_TO:
+                    continue
                 content = tweetContains(tweet.text)
                 if content != None:
                     reply(api, content, tweet.id)
                     print('Replied to {} with content {}'.format(tweet.user.name, content))
-                    break
-        time.sleep(60*5) # 5 min
+                    REPLIED_TO.add(tweet.id)
+                    repliedTo.write(str(tweet.id) + "\n")
+                    continue
+        repliedTo.flush()
+        time.sleep(60) # 1 min
 
 if __name__ == '__main__':
     main()
