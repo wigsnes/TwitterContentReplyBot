@@ -1,11 +1,14 @@
 # Twitter Content Reply Bot
 
 ## Hacktoberfest
-Please read the CONTRIBUTING.md on how to contribute to this project.
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) on how to contribute to this project.
 
-## How to make it run with your own twitter account.
 
-To make this code work with your own twitter account you first need to apply for a twitter app at https://developer.twitter.com/. This will give you the keys, and tokens needed to make it work. Create a file called config.py and fill them inn like so:
+## Running the bot on your own Twitter account
+
+* Apply for a Twitter developer account [here](https://developer.twitter.com/en/apply-for-access)
+* This will give you access to your own API keys and access tokens.
+* Now, create a file called `config.py` inside the working directory and fill it in 
 
 ```
 API_key = "YOUR OWN API KEY"
@@ -14,4 +17,8 @@ Access_token = "YOUR OWN ACCESS TOKEN"
 Access_token_secret = "YOUR OWN SECRET ACCESS TOKEN"
 ```
 
-Also remember to set DEBUG to false in twitter.py
+Also remember to set 
+```
+DEBUG = false
+``` 
+in [twitter.py](twitter.py).
