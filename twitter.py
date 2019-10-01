@@ -7,6 +7,9 @@ import random
 # --- DEGUG --- #
 DEBUG = True
 
+if DEBUG:
+    open('repliedTo.txt', 'w').write('')  # Clearing 'repliedTo.txt' if in debug mode
+
 # --- SETUP --- #
 
 USERS = set(line.strip() for line in open('users.txt', 'r'))
