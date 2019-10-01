@@ -4,6 +4,12 @@
 
 Please read the [CONTRIBUTING.md](CONTRIBUTING.md) on how to contribute to this project.
 
+## How to run the code with mock data
+```
+python twitter.py
+```
+This will start an endless loop that check user tweets every minute, and replies if there are any match from [content.json](content.json).
+
 ## Running the bot on your own Twitter account
 
 - Apply for a Twitter developer account [here](https://developer.twitter.com/en/apply-for-access)
