@@ -82,6 +82,8 @@ def main():
                     continue
         repliedTo.flush()
         time.sleep(60) # 1 min
+        break
+
 
 if __name__ == '__main__':
     main()
