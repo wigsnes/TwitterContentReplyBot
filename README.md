@@ -8,7 +8,7 @@ Please read the [CONTRIBUTING.md](CONTRIBUTING.md) on how to contribute to this 
 
 - Apply for a Twitter developer account [here](https://developer.twitter.com/en/apply-for-access)
 - This will give you access to your own API keys and access tokens.
-- Now, create a file called `config.py` inside the working directory and fill it in
+- Now, change the file called `config.py` inside the working directory and fill it in
 
 ```
 API_key = "YOUR OWN API KEY"
