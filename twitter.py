@@ -2,6 +2,7 @@ import tweepy
 import config
 import json
 import time
+import random
 
 # --- DEGUG --- #
 DEBUG = True
@@ -35,17 +36,17 @@ class mock:
         pass
 
     def user_timeline(self, screen_name, count):
-        return [Tweet(tweet) for tweet in MOCK[screen_name]]
+        return [Tweet(tweet, screen_name) for tweet in MOCK[screen_name]]
 
 class Tweet:
-    def __init__(self, tweet):
+    def __init__(self, tweet, user_name):
         self.text = tweet["text"]
-        self.id = tweet["id"]
-        self.user = User(tweet["user"])
+        self.id = random.randint(1000000000, 9999999999)
+        self.user = User(user_name)
 
 class User:
-    def __init__(self, user):
-        self.name = user["name"]
+    def __init__(self, user_name):
+        self.name = user_name
 
 # --- HELPER FUNCTIONS --- #
 
@@ -68,7 +69,6 @@ def main():
         # Get latest tweets from users
         for user in USERS:
             tweets = getTweets(api, user, 5)
-
             # Check if tweets match list of content
             for tweet in tweets:
                 if tweet.id in REPLIED_TO:
