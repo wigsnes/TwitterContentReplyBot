@@ -5,7 +5,7 @@ import time
 import random
 
 # --- DEGUG --- #
-DEBUG = True
+DEBUG = False
 
 if DEBUG:
     open('repliedTo.txt', 'w').write('')  # Clearing 'repliedTo.txt' if in debug mode
@@ -27,8 +27,8 @@ def setup():
     return tweepy.API(auth)
 
 
-def reply(api, tweet, tweet_id):
-    api.update_status(tweet, tweet_id)
+def reply(api, user, tweet, tweet_id):
+    api.update_status("@{} {}".format(user, tweet), tweet_id)
 
 
 def getTweets(api, username, n):
@@ -91,7 +91,7 @@ def main():
                     continue
                 content = tweetContains(tweet.text)
                 if content != None:
-                    reply(api, content, tweet.id)
+                    reply(api, user, content, tweet.id)
                     print('Replied to {} with content {}'.format(tweet.user.name, content))
                     REPLIED_TO.add(tweet.id)
                     repliedTo.write(str(tweet.id) + "\n")
