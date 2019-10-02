@@ -47,34 +47,18 @@ but if you do you also have to include them in `mock.json` like so:
 {
     "icecube": [
         {
-            "text": "In case y'all didn't know \"It Was A Good Day\"..",
-            "id":5455667342234,
-            "user": {
-                "name": "icecube"
-            }
+            "text": "In case y'all didn't know \"It Was A Good Day\".."
         },
         {
-            "text": "In shock this morning. It always hurts a little when...",
-            "id":454565576342,
-            "user": {
-                "name": "icecube"
-            }
+            "text": "In shock this morning. It always hurts a little when..."
         }
     ],
     "JimCarrey": [
         {
-            "text": "Rise up! Rise up armies of darkness!...",
-            "id":442243547875,
-            "user": {
-                "name": "JimCarrey"
-            }
+            "text": "Rise up! Rise up armies of darkness!..."
         },
         {
-            "text": "Yippie-ki-yay MF!",
-            "id":3367879899864,
-            "user": {
-                "name": "JimCarrey"
-            }
+            "text": "Yippie-ki-yay MF!"
         }
     ]
 }
