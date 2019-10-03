@@ -1,4 +1,4 @@
-API_key = "YOUR OWN API KEY"
-API_secret_key = "YOUR OWN API SECRET KEY"
-Access_token = "YOUR OWN ACCESS TOKEN"
-Access_token_secret = "YOUR OWN SECRET ACCESS TOKEN"
+API_key = "OkhX213zGrdRwBDkKeDQ1rp26"
+API_secret_key = "pULgvnUC3Vep2wjSuh4OqobE4fm6OXjEgZD5h1cMKVGNqr9JEU"
+Access_token = "928734818212433920-3GrrvkpgnfYOMzbBAJ9OxH8BGEn3jGc"
+Access_token_secret = "pqcpBFiPM0K7B03dJ4Kk1OL3sNg6KHJOIvscjtLEQubf0"
