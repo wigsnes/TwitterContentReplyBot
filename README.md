@@ -2,15 +2,25 @@
 
 ## Hacktoberfest
 
-Please read the [CONTRIBUTING.md](CONTRIBUTING.md) on how to contribute to this project.
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file to find out how you can help out.
 
-## How to run the code with mock data
+## Running the bot
+
+### Using mock data
+
+If you wish to use mock data, first make sure that
+```
+DEBUG = True
+```
+in the [twitter.py](twitter.py) file.\
+If yes, or after setting it to True, run
+
 ```
 python twitter.py
 ```
 This will go through each users tweet and see if they match with any of the content found in [content.json](content.json).
 
-## Running the bot on your own Twitter account
+### Using your own Twitter account
 
 - Apply for a Twitter developer account [here](https://developer.twitter.com/en/apply-for-access)
 - This will give you access to your own API keys and access tokens.
@@ -23,10 +33,8 @@ Access_token = "YOUR OWN ACCESS TOKEN"
 Access_token_secret = "YOUR OWN SECRET ACCESS TOKEN"
 ```
 
-Also remember to set
-
+Before running the code, make sure that
 ```
-DEBUG = false
+DEBUG = False
 ```
-
 in [twitter.py](twitter.py).
