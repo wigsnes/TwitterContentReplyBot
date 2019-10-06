@@ -3,18 +3,21 @@ import config
 import json
 import time
 import random
+import jsonpickle
 
 # --- DEGUG --- #
-DEBUG = False
+DEBUG = True
 
 if DEBUG:
     open('repliedTo.txt', 'w').write('')  # Clearing 'repliedTo.txt' if in debug mode
+    TWEETS = jsonpickle.loads(open('tweetsMock.json', 'r', encoding="utf8").read())
+    USERS = jsonpickle.loads(open('usersMock.json', 'r', encoding="utf8").read())
+else:
+    USERS = set(line.strip() for line in open('users.txt', 'r'))
 
 # --- SETUP --- #
 
-USERS = set(line.strip() for line in open('users.txt', 'r'))
 CONTENT = json.load(open('content.json', 'r', encoding="utf8"))
-MOCK = json.load(open('mock.json', 'r', encoding="utf8"))
 REPLIED_TO = set(int(line.strip()) for line in open('repliedTo.txt', 'r'))
 repliedTo = open('repliedTo.txt', 'a')
 
@@ -31,8 +34,16 @@ def reply(api, user, tweet, tweet_id):
     api.update_status("@{} {}".format(user, tweet), tweet_id)
 
 
-def getTweets(api, username, n):
-    return api.user_timeline(screen_name=username, count=n)
+def getTweets(api, user, n):
+    try:
+        return api.user_timeline(screen_name=user, count=n)
+    except tweepy.error.RateLimitError:
+        print("Rate limit reached. Waiting 15min.")
+        time.sleep(60 * 15)  # 15 min
+
+def isProtected(api, user):
+    U = api.get_user(user)
+    return U.protected
 
 
 # --- MOCK --- #
@@ -43,7 +54,10 @@ class mock:
         pass
 
     def user_timeline(self, screen_name, count):
-        return [Tweet(tweet, screen_name) for tweet in MOCK[screen_name]]
+        return [Tweet(tweet, screen_name) for tweet in TWEETS[screen_name]]
+
+    def get_user(self, user):
+        return User(user)
 
 
 class Tweet:
@@ -54,20 +68,21 @@ class Tweet:
 
 
 class User:
-    def __init__(self, user_name):
+    def __init__(self, user_name, protected=False):
         self.name = user_name
+        self.protected = protected
 
 
 # --- HELPER FUNCTIONS --- #
 
-def tweetContains(tweet):
+def tweetMatchesContent(tweet):
     matches = list()
     for text, content in CONTENT.items():
         if str.lower(text) in str.lower(tweet):
             matches.append((text, content))
     if len(matches) != 0:
         matches.sort(key=lambda x: len(x[0]), reverse=True)
-        return matches[0][1]
+        return matches[0]
     else:
         return None
 
@@ -89,18 +104,18 @@ def main():
             for tweet in tweets:
                 if tweet.id in REPLIED_TO:
                     continue
-                content = tweetContains(tweet.text)
+                content = tweetMatchesContent(tweet.text)
                 if content != None:
-                    reply(api, user, content, tweet.id)
-                    print('Replied to {} with content {}'.format(tweet.user.name, content))
+                    # reply(api, user, content[1], tweet.id)
+                    print('---------------------------------------------')
+                    print('User:\t{}\nTweet:\t{}\nFound:\t{}\nReply:\t{}'.format(tweet.user.name, tweet.text.replace('\n', ''), content[0], content[1]))
                     REPLIED_TO.add(tweet.id)
                     repliedTo.write(str(tweet.id) + "\n")
                     continue
-        repliedTo.flush()
-        time.sleep(60)  # 1 min
         if DEBUG:
             break
-
+        repliedTo.flush()
+        time.sleep(60)  # 1 min
 
 if __name__ == '__main__':
     main()
