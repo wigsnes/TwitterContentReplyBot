@@ -100,15 +100,6 @@ def main():
     else:
         api = setup()
 
-    for user in USERS:
-        tweets = getTweets(api, user, 5)
-        if len(tweets) == 0:
-            print(user)
-            continue
-        ts = time.strftime('%m', time.strptime(tweets[0].created_at,'%Y-%m-%d %H:%M:%S'))
-        if int(ts) < 8:
-            print(user)
-
     while True:
         for user in USERS:
             tweets = getTweets(api, user, 5)
