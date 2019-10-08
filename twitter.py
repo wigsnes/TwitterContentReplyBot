@@ -10,16 +10,16 @@ DEBUG = True
 
 if DEBUG:
     open('repliedTo.txt', 'w').write('')  # Clearing 'repliedTo.txt' if in debug mode
-    TWEETS = jsonpickle.loads(open('tweetsMock.json', 'r', encoding="utf8").read())
-    USERS = jsonpickle.loads(open('usersMock.json', 'r', encoding="utf8").read())
+    TWEETS = jsonpickle.loads(open('mock/tweetsMock.json', 'r', encoding="utf8").read())
+    USERS = jsonpickle.loads(open('mock/usersMock.json', 'r', encoding="utf8").read())
 else:
-    USERS = set(line.strip() for line in open('users.txt', 'r'))
+    USERS = set(line.strip() for line in open('data/users.txt', 'r'))
 
 # --- SETUP --- #
 
-CONTENT = json.load(open('content.json', 'r', encoding="utf8"))
-REPLIED_TO = set(int(line.strip()) for line in open('repliedTo.txt', 'r'))
-repliedTo = open('repliedTo.txt', 'a')
+CONTENT = json.load(open('data/content.json', 'r', encoding="utf8"))
+REPLIED_TO = set(int(line.strip()) for line in open('data/repliedTo.txt', 'r'))
+repliedTo = open('data/repliedTo.txt', 'a')
 
 
 # --- Twitter --- #
@@ -32,6 +32,8 @@ def setup():
 
 def reply(api, user, tweet, tweet_id):
     api.update_status("@{} {}".format(user, tweet), tweet_id)
+    REPLIED_TO.add(tweet_id)
+    repliedTo.write(str(tweet_id) + "\n")
 
 
 def getTweets(api, user, n):
@@ -40,6 +42,7 @@ def getTweets(api, user, n):
     except tweepy.error.RateLimitError:
         print("Rate limit reached. Waiting 15min.")
         time.sleep(60 * 15)  # 15 min
+
 
 def isProtected(api, user):
     U = api.get_user(user)
@@ -65,6 +68,8 @@ class Tweet:
         self.text = tweet["text"]
         self.id = random.randint(1000000000, 9999999999)
         self.user = User(user_name)
+        self.retweeted = tweet["retweeted"]
+        self.created_at = tweet["created_at"]
 
 
 class User:
@@ -95,27 +100,39 @@ def main():
     else:
         api = setup()
 
+    for user in USERS:
+        tweets = getTweets(api, user, 5)
+        if len(tweets) == 0:
+            print(user)
+            continue
+        ts = time.strftime('%m', time.strptime(tweets[0].created_at,'%Y-%m-%d %H:%M:%S'))
+        if int(ts) < 8:
+            print(user)
+
     while True:
-        print(".")
-        # Get latest tweets from users
         for user in USERS:
             tweets = getTweets(api, user, 5)
-            # Check if tweets match list of content
-            for tweet in tweets:
-                if tweet.id in REPLIED_TO:
-                    continue
-                content = tweetMatchesContent(tweet.text)
-                if content != None:
-                    # reply(api, user, content[1], tweet.id)
-                    print('---------------------------------------------')
-                    print('User:\t{}\nTweet:\t{}\nFound:\t{}\nReply:\t{}'.format(tweet.user.name, tweet.text.replace('\n', ''), content[0], content[1]))
-                    REPLIED_TO.add(tweet.id)
-                    repliedTo.write(str(tweet.id) + "\n")
-                    continue
+            checkTweets(api, user, tweets)
+            
         if DEBUG:
             break
         repliedTo.flush()
         time.sleep(60)  # 1 min
+        print(".")
+
+
+def checkTweets(api, user, tweets):
+    for tweet in tweets:
+        if tweet.id in REPLIED_TO:
+            continue
+        if tweet.retweeted:
+            continue
+
+        content = tweetMatchesContent(tweet.text)
+        if content != None:
+            reply(api, user, content[1], tweet.id)
+            print('---------------------------------------------')
+            print('User:\t{}\nTweet:\t{}\nFound:\t{}\nReply:\t{}'.format(tweet.user.name, tweet.text.replace('\n', ''), content[0], content[1]))
 
 if __name__ == '__main__':
     main()
